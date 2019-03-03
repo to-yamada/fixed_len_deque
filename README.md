@@ -1,2 +1,3 @@
-# rbuf
-simple ring buffer for C
+# deque
+
+Fixed length deque(double ended queue) for embedded systems.
