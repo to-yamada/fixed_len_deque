@@ -1,3 +1,3 @@
-# deque
+# queue
 
-Fixed length deque(double ended queue) for embedded systems.
+Fixed length queue for embedded systems.
