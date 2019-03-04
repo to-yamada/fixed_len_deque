@@ -23,46 +23,52 @@ SOFTWARE.
 #ifndef	FIXED_LEN_QUEUE_H_INCLUDED
 #define	FIXED_LEN_QUEUE_H_INCLUDED
 
-#define DEFINE_FIXED_LEN_QUEUE(T, size, name)								\
-struct struct_##name {														\
-	unsigned int num;														\
-	unsigned int start;														\
-	T data[size];															\
-};																			\
-																			\
-static void clear_##name(struct struct_##name *queue)						\
-{																			\
-	if (queue != 0) {														\
-		queue->num = 0;														\
-		queue->start = 0;													\
-	}																		\
-}																			\
-																			\
-static int enqueue_##name(struct struct_##name *queue, const T *data)		\
-{																			\
-	if ((queue != 0) && (data != 0) && (queue->num < (size))) {				\
-		queue->data[(queue->start + queue->num) % (size)] = *data;			\
-		queue->num++;														\
-		return 1;															\
-	}																		\
-	else {																	\
-		return 0;															\
-	}																		\
-}																			\
-																			\
-static int dequeue_##name(struct struct_##name *queue, T *data)				\
-{																			\
-	if ((queue != 0) && (queue->num > 0)) {									\
-		if (data != 0) *data = queue->data[queue->start];					\
-		queue->start = (queue->start + 1) % (size);							\
-		queue->num--;														\
-		return 1;															\
-	}																		\
-	else {																	\
-		return 0;															\
-	}																		\
-}																			\
-																			\
+#define IMPLEMENT_QUEUE_FUNC_CLEAR(T, size, name)		\
+static void clear_##name(struct struct_##name *queue)	\
+{														\
+	if (queue != 0) {									\
+		queue->num = 0;									\
+		queue->start = 0;								\
+	}													\
+}
+
+#define IMPLEMENT_QUEUE_FUNC_ENQUEUE(T, size, name)						\
+static int enqueue_##name(struct struct_##name *queue, const T *data)	\
+{																		\
+	if ((queue != 0) && (data != 0) && (queue->num < (size))) {			\
+		queue->data[(queue->start + queue->num) % (size)] = *data;		\
+		queue->num++;													\
+		return 1;														\
+	}																	\
+	else {																\
+		return 0;														\
+	}																	\
+}
+
+#define IMPLEMENT_QUEUE_FUNC_DEQUEUE(T, size, name)				\
+static int dequeue_##name(struct struct_##name *queue, T *data)	\
+{																\
+	if ((queue != 0) && (queue->num > 0)) {						\
+		if (data != 0) *data = queue->data[queue->start];		\
+		queue->start = (queue->start + 1) % (size);				\
+		queue->num--;											\
+		return 1;												\
+	}															\
+	else {														\
+		return 0;												\
+	}															\
+}
+
+
+#define DEFINE_FIXED_LEN_QUEUE(T, size, name)	\
+struct struct_##name {							\
+	unsigned int num;							\
+	unsigned int start;							\
+	T data[size];								\
+};												\
+IMPLEMENT_QUEUE_FUNC_CLEAR(T, size, name)		\
+IMPLEMENT_QUEUE_FUNC_ENQUEUE(T, size, name)		\
+IMPLEMENT_QUEUE_FUNC_DEQUEUE(T, size, name)		\
 typedef struct struct_##name name
 
 #endif	/* FIXED_LEN_QUEUE_H_INCLUDED */
