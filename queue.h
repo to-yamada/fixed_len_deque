@@ -59,6 +59,18 @@ static int dequeue_##name(struct struct_##name *queue, T *data)	\
 	}															\
 }
 
+#define IMPLEMENT_QUEUE_FUNC_AT(T, size, name)									\
+static int at_##name(struct struct_##name *queue, unsigned int index, T *data)	\
+{																				\
+	if ((queue != 0) && (queue->num > 0) && (index < queue->num)) {				\
+		if (data != 0) *data = queue->data[(queue->start + index) % size];		\
+		return 1;																\
+	}																			\
+	else {																		\
+		return 0;																\
+	}																			\
+}
+
 
 #define DEFINE_FIXED_LEN_QUEUE(T, size, name)	\
 struct struct_##name {							\
@@ -69,6 +81,7 @@ struct struct_##name {							\
 IMPLEMENT_QUEUE_FUNC_CLEAR(T, size, name)		\
 IMPLEMENT_QUEUE_FUNC_ENQUEUE(T, size, name)		\
 IMPLEMENT_QUEUE_FUNC_DEQUEUE(T, size, name)		\
+IMPLEMENT_QUEUE_FUNC_AT(T, size, name)			\
 typedef struct struct_##name name
 
 #endif	/* FIXED_LEN_QUEUE_H_INCLUDED */

@@ -80,6 +80,67 @@ static void test_dequeue_more_than_num_enqueues_uc(void)
 	PCU_ASSERT_FALSE(dequeue_UC_QUEUE(&uc_queue, &data));
 }
 
+static void test_enqueue_at_single_uc(void)
+{
+	unsigned char data = 0;
+	const unsigned char expected = 10;
+
+	PCU_ASSERT_TRUE(enqueue_UC_QUEUE(&uc_queue, &expected));
+
+	PCU_ASSERT_TRUE(at_UC_QUEUE(&uc_queue, 0, &data));
+	PCU_ASSERT_EQUAL(expected, data);
+}
+
+static void test_enqueue_at_multi_uc(void)
+{
+	const unsigned char expected[] = {10, 20, 30, 40, 50};
+	int i = 0;
+
+	for (i = 0; i < 5; i++) {
+		PCU_ASSERT_TRUE(enqueue_UC_QUEUE(&uc_queue, &expected[i]));
+	}
+
+	for (i = 0; i < 5; i++) {
+		unsigned char data = 0;
+		PCU_ASSERT_TRUE(at_UC_QUEUE(&uc_queue, i, &data));
+		PCU_ASSERT_EQUAL(expected[i], data);
+	}
+}
+
+static void test_at_empty_uc(void)
+{
+	unsigned char data = 0;
+
+	PCU_ASSERT_FALSE(at_UC_QUEUE(&uc_queue, 0, &data));
+}
+
+static void test_at_more_than_num_enqueues_uc(void)
+{
+	unsigned char data = 0;
+
+	PCU_ASSERT_TRUE(enqueue_UC_QUEUE(&uc_queue, &data));
+
+	PCU_ASSERT_TRUE(at_UC_QUEUE(&uc_queue, 0, &data));
+	PCU_ASSERT_TRUE(at_UC_QUEUE(&uc_queue, 0, &data));
+}
+
+static void test_at_invalid_index_uc(void)
+{
+	unsigned char data = 0;
+
+	PCU_ASSERT_TRUE(enqueue_UC_QUEUE(&uc_queue, &data));
+
+	PCU_ASSERT_FALSE(at_UC_QUEUE(&uc_queue, 1, &data));
+}
+
+static void test_at_NULL_uc(void)
+{
+	unsigned char data = 0;
+
+	enqueue_UC_QUEUE(&uc_queue, &data);
+	PCU_ASSERT_TRUE(at_UC_QUEUE(&uc_queue, 0, NULL));
+}
+
 
 PCU_Suite *test_queue_suite(void)
 {
