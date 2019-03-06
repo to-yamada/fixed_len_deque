@@ -10,6 +10,7 @@ VPATH =
 
 TARGET = alltests
 OBJS = main.o
+OBJS += queue.o
 OBJS += test_queue.o
 
 
@@ -23,6 +24,9 @@ pcunit_register:
 .SUFFIXES: .c .o
 
 .c.o:
+	$(CC) $(CFLAGS) -c $<
+
+queue.o: ../queue.c
 	$(CC) $(CFLAGS) -c $<
 
 $(LIBPCUNIT):

@@ -23,66 +23,21 @@ SOFTWARE.
 #ifndef	FIXED_LEN_QUEUE_H_INCLUDED
 #define	FIXED_LEN_QUEUE_H_INCLUDED
 
-#define IMPLEMENT_QUEUE_FUNC_CLEAR(T, size, name)		\
-static void clear_##name(struct struct_##name *queue)	\
-{														\
-	if (queue != 0) {									\
-		queue->num = 0;									\
-		queue->start = 0;								\
-	}													\
-}
+typedef struct {
+	unsigned int num;
+	unsigned int start;
+	void *data;
+	size_t item_size;
+	size_t max_num;
+} QUEUE;
 
-#define IMPLEMENT_QUEUE_FUNC_ENQUEUE(T, size, name)						\
-static int enqueue_##name(struct struct_##name *queue, const T *data)	\
-{																		\
-	if ((queue != 0) && (data != 0) && (queue->num < (size))) {			\
-		queue->data[(queue->start + queue->num) % (size)] = *data;		\
-		queue->num++;													\
-		return 1;														\
-	}																	\
-	else {																\
-		return 0;														\
-	}																	\
-}
-
-#define IMPLEMENT_QUEUE_FUNC_DEQUEUE(T, size, name)				\
-static int dequeue_##name(struct struct_##name *queue, T *data)	\
-{																\
-	if ((queue != 0) && (queue->num > 0)) {						\
-		if (data != 0) *data = queue->data[queue->start];		\
-		queue->start = (queue->start + 1) % (size);				\
-		queue->num--;											\
-		return 1;												\
-	}															\
-	else {														\
-		return 0;												\
-	}															\
-}
-
-#define IMPLEMENT_QUEUE_FUNC_AT(T, size, name)									\
-static int at_##name(struct struct_##name *queue, unsigned int index, T *data)	\
-{																				\
-	if ((queue != 0) && (queue->num > 0) && (index < queue->num)) {				\
-		if (data != 0) *data = queue->data[(queue->start + index) % size];		\
-		return 1;																\
-	}																			\
-	else {																		\
-		return 0;																\
-	}																			\
-}
-
-
-#define DEFINE_FIXED_LEN_QUEUE(T, size, name)	\
-struct struct_##name {							\
-	unsigned int num;							\
-	unsigned int start;							\
-	T data[size];								\
-};												\
-IMPLEMENT_QUEUE_FUNC_CLEAR(T, size, name)		\
-IMPLEMENT_QUEUE_FUNC_ENQUEUE(T, size, name)		\
-IMPLEMENT_QUEUE_FUNC_DEQUEUE(T, size, name)		\
-IMPLEMENT_QUEUE_FUNC_AT(T, size, name)			\
-typedef struct struct_##name name
+#define INIT_QUEUE_ARRAY(queue, array) \
+	init_queue((queue), (array), sizeof((array)[0]), sizeof(array) / sizeof((array)[0]))
+void init_queue(QUEUE *queue, void *data_array, size_t item_size, size_t max_num);
+void clear_queue(QUEUE *queue);
+int enqueue_queue(QUEUE *queue, const void *data);
+int dequeue_queue(QUEUE *queue, void *data);
+int at_queue(const QUEUE *queue, size_t index, void *data);
 
 #endif	/* FIXED_LEN_QUEUE_H_INCLUDED */
 
